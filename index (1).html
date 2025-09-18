@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanGo - Track. Ride. Arrive</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f3f4f6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gray: #6b7280;
+            --success: #22c55e;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Landing Page Styles */
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .landing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(31, 41, 55, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .landing-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .landing-logo i {
+            color: var(--secondary);
+        }
+
+        .landing-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .landing-nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .landing-nav a:hover {
+            color: var(--primary);
+        }
+
+        .landing-auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .landing-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .hero-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--gray);
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .features-section {
+            padding: 80px 50px;
+            background: var(--dark);
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: var(--gray);
+        }
+
+        .about-section {
+            padding: 80px 50px;
+            background: var(--darker);
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            margin-bottom: 40px;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            background: var(--dark);
+            padding: 40px 50px;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            color: var(--gray);
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+        }
+
+        .login-card {
+            background: rgba(31, 41, 55, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .login-logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .form-group input {
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            background: var(--darker);
+            color: var(--light);
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-btn {
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #4f46e5;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Signup Page Styles */
+        .signup-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+        }
+
+        .signup-card {
+            background: rgba(31, 41, 55, 0.9);
+            padding: 40px;
+            border-radius: 16px;
+            width: 450px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            flex-direction: column;
+            max-width: 100%;
+            margin: 0 auto;
+            width: 100%;
+            height: 100vh;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--dark);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--darker);
+            border: none;
+            color: var(--light);
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--dark);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            color: var(--gray);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 0;
+            height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            background: var(--dark);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--gray);
+        }
+
+        .journey-planner {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .planner-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .datetime-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .map-container {
+            position: relative;
+            height: 100%;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(31, 41, 55, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: none;
+            background: var(--darker);
+            color: var(--light);
+            width: 250px;
+        }
+
+        .search-box button {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+
+        .right-sidebar {
+            background: var(--dark);
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 1px solid var(--gray);
+        }
+
+        .card {
+            background: rgba(31, 41, 55, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .bus-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bus-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .bus-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .bus-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .bus-route {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .bus-details {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .bus-eta {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .notification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        /* Animation for live indicator */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .live-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--danger);
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 12px;
+            width: 400px;
+            max-width: 90%;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 280px 1fr 320px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .sidebar, .right-sidebar {
+                border: none;
+                border-bottom: 1px solid var(--gray);
+            }
+            
+            .map-container {
+                order: 2;
+                height: 400px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .landing-header {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .landing-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .login-card, .signup-card {
+                width: 90%;
+                padding: 30px 20px;
+            }
+            
+            .search-box input {
+                width: 180px;
+            }
+            
+            .datetime-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .features-section, .about-section {
+                padding: 50px 20px;
+            }
+        }
+
+        /* Light theme */
+        body.light-theme {
+            --dark: #e5e7eb;
+            --darker: #f3f4f6;
+            --light: #1f2937;
+            --gray: #9ca3af;
+        }
+
+        body.light-theme .login-container,
+        body.light-theme .signup-container {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        }
+
+        body.light-theme .login-card,
+        body.light-theme .signup-card,
+        body.light-theme .card {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .form-group input {
+            background: white;
+            color: #1f2937;
+        }
+
+        body.light-theme .map-overlay {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.light-theme .search-box input {
+            background: white;
+            color: #1f2937;
+        }
+
+        body.light-theme .feature-card,
+        body.light-theme .modal-content {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Custom bus marker styles */
+        .bus-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        /* Pulsing animation for bus markers */
+        @keyframes pulse-bus {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse-bus 2s infinite;
+        }
+        
+        .route-line {
+            stroke-dasharray: 10;
+            animation: dash-animation 20s linear infinite;
+        }
+        
+        @keyframes dash-animation {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div class="landing-container" id="landingPage">
+        <header class="landing-header">
+            <div class="landing-logo">
+                <i class="fas fa-bus"></i>
+                <span>UrbonGo</span>
+            </div>
+            <nav class="landing-nav">
+                <a href="#features">Features</a>
+                <a href="#about">About Us</a>
+                <a href="#" id="showPrivacyModal">Privacy Policy</a>
+                <a href="#" id="showTermsModal">Terms of Service</a>
+            </nav>
+            <div class="landing-auth-buttons">
+                <button class="landing-btn btn-outline" id="showLogin">Login</button>
+                <button class="landing-btn btn-primary" id="showSignup">Sign Up</button>
+            </div>
+        </header>
+
+        <section class="hero-section">
+            <h1 class="hero-title">Track Bus in Real-Time Across Cities</h1>
+            <p class="hero-subtitle">UrbonGo provides accurate, real-time bus tracking and arrival predictions to make your commute easier and more predictable.</p>
+            <div class="hero-buttons">
+                <button class="landing-btn btn-primary" id="heroLogin">Get Started</button>
+                <button class="landing-btn btn-outline" id="heroLearnMore">Learn More</button>
+            </div>
+            <div class="hero-demo">
+                <!-- Placeholder for a demo graphic or video -->
+                <i class="fas fa-map-marked-alt" style="font-size: 200px; color: var(--primary); opacity: 0.8;"></i>
+            </div>
+        </section>
+
+        <section class="features-section" id="features">
+            <div class="section-heading">
+                <h2 class="section-title">Why Choose urbonGo?</h2>
+                <p class="section-subtitle">Our advanced tracking system provides numerous benefits for daily commuters and occasional travelers alike.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Tracking</h3>
+                    <p class="feature-description">See exactly where your bus is and get accurate arrival predictions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Notifications</h3>
+                    <p class="feature-description">Get alerts when your bus is approaching your stop.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3 class="feature-title">Route Planning</h3>
+                    <p class="feature-description">Plan your journey with the most efficient routes and connections.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title">Capacity Information</h3>
+                    <p class="feature-description">See how crowded a bus is before it arrives.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Live Updates</h3>
+                    <p class="feature-description">Receive real-time updates about delays or route changes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="feature-title">Journey History</h3>
+                    <p class="feature-description">Access your travel history and favorite routes.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section" id="about">
+            <div class="section-heading">
+                <h2 class="section-title">About UrbanGo</h2>
+                <p class="section-subtitle">Learn about our mission and the technology behind our service.</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>UrbanGo was founded in 2025 with a simple mission: to make public transportation more reliable and accessible for everyone. We believe that accurate real-time information can transform the commuting experience.</p>
+                    <p>Our system uses advanced GPS technology combined with machine learning algorithms to provide the most accurate arrival predictions in the industry. We partner with transportation agencies across the country to bring you this service.</p>
+                    <p>Whether you're a daily commuter or an occasional traveler, UrbanGo helps you save time and reduce stress by knowing exactly when your bus will arrive.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#about">About Us</a>
+                <a href="#" id="footerPrivacy">Privacy Policy</a>
+                <a href="#" id="footerTerms">Terms of Service</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="copyright">© 2025 UrbanGo. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-bus"></i>
+                <h1>UrbanGo</h1>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            <div class="login-footer">
+                Don't have an account? <a href="#" id="gotoSignup">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div class="signup-container" id="signupPage">
+        <div class="signup-card">
+            <div class="login-logo">
+                <i class="fas fa-bus"></i>
+                <h1>Create Account</h1>
+            </div>
+            <form class="login-form" id="signupForm">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="login-btn">Create Account</button>
+            </form>
+            <div class="login-footer">
+                Already have an account? <a href="#" id="gotoLogin">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-container" id="appContainer">
+        <header>
+            <div class="logo">
+                <i class="fas fa-bus"></i>
+                <span>UrbanGo</span>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                    <span>Light Mode</span>
+                </button>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar">JS</div>
+                    <span>User</span>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-item" id="profileBtn">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </div>
+                        <div class="dropdown-item" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="journey-planner">
+                    <h3 class="section-title">Plan Your Journey</h3>
+                    <div class="planner-form">
+                        <div class="form-group">
+                            <label for="from">From</label>
+                            <input type="text" id="from" placeholder="Current location" value="Chandigarh">
+                        </div>
+                        <div class="form-group">
+                            <label for="to">To</label>
+                            <input type="text" id="to" placeholder="Destination" value="Ambala">
+                        </div>
+                        <div class="datetime-inputs">
+                            <div class="form-group">
+                                <label for="date">Date</label>
+                                <input type="date" id="date">
+                            </div>
+                            <div class="form-group">
+                                <label for="time">Time</label>
+                                <input type="time" id="time">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-route"></i>
+                            Find Route
+                        </button>
+                    </div>
+                </div>
+
+                <div class="recent-routes">
+                    <h3 class="section-title">Recent Routes</h3>
+                    <div class="route-list">
+                        <div class="bus-item">
+                            <div class="bus-info">
+                                <div class="bus-route">Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>120 km</span>
+                                    <span>•</span>
+                                    <span>2h 30m</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="bus-item">
+                            <div class="bus-info">
+                                <div class="bus-route">Chandigarh to Panchkula</div>
+                                <div class="bus-details">
+                                    <span>20 km</span>
+                                    <span>•</span>
+                                    <span>45m</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="bus-item">
+                            <div class="bus-info">
+                                <div class="bus-route">Chandigarh to Mohali</div>
+                                <div class="bus-details">
+                                    <span>15 km</span>
+                                    <span>•</span>
+                                    <span>30m</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-overlay">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search for a bus or route...">
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Live Buses <span class="live-indicator"></span></div>
+                        <div class="card-actions">
+                            <i class="fas fa-rotate-right"></i>
+                        </div>
+                    </div>
+                    <div class="bus-list">
+                        <div class="bus-item" data-bus="B101">
+                            <div class="bus-info">
+                                <div class="bus-route">B101 - Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>Speed: 62 km/h</span>
+                                    <span>•</span>
+                                    <span>Capacity: 68%</span>
+                                </div>
+                            </div>
+                            <div class="bus-eta">15 min</div>
+                        </div>
+                        <div class="bus-item" data-bus="B205">
+                            <div class="bus-info">
+                                <div class="bus-route">B205 - Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>Speed: 58 km/h</span>
+                                    <span>•</span>
+                                    <span>Capacity: 82%</span>
+                                </div>
+                            </div>
+                            <div class="bus-eta">22 min</div>
+                        </div>
+                        <div class="bus-item" data-bus="B307">
+                            <div class="bus-info">
+                                <div class="bus-route">B307 - Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>Speed: 65 km/h</span>
+                                    <span>•</span>
+                                    <span>Capacity: 45%</span>
+                                </div>
+                            </div>
+                            <div class="bus-eta">30 min</div>
+                        </div>
+                        <div class="bus-item" data-bus="B409">
+                            <div class="bus-info">
+                                <div class="bus-route">B409 - Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>Speed: 60 km/h</span>
+                                    <span>•</span>
+                                    <span>Capacity: 75%</span>
+                                </div>
+                            </div>
+                            <div class="bus-eta">38 min</div>
+                        </div>
+                        <div class="bus-item" data-bus="B512">
+                            <div class="bus-info">
+                                <div class="bus-route">B512 - Chandigarh to Ambala</div>
+                                <div class="bus-details">
+                                    <span>Speed: 55 km/h</span>
+                                    <span>•</span>
+                                    <span>Capacity: 90%</span>
+                                </div>
+                            </div>
+                            <div class="bus-eta">45 min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Bus Details</div>
+                    </div>
+                    <div class="bus-details-content">
+                        <div class="detail-item">
+                            <div class="detail-label">Bus Number</div>
+                            <div class="detail-value">B101</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Route</div>
+                            <div class="detail-value">Chandigarh to Ambala</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Next Stop</div>
+                            <div class="detail-value">Kharar Bus Stand (5 min)</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Estimated Arrival</div>
+                            <div class="detail-value">15 minutes</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Distance</div>
+                            <div class="detail-value">32 km completed, 88 km remaining</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Notify Me</div>
+                    </div>
+                    <div class="notification-form">
+                        <div class="form-group">
+                            <label for="bus-select">Select Bus</label>
+                            <select id="bus-select">
+                                <option value="B101">B101 - Chandigarh to Ambala</option>
+                                <option value="B205">B205 - Chandigarh to Ambala</option>
+                                <option value="B307">B307 - Chandigarh to Ambala</option>
+                                <option value="B409">B409 - Chandigarh to Ambala</option>
+                                <option value="B512">B512 - Chandigarh to Ambala</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="stop-select">Select Stop</label>
+                            <select id="stop-select">
+                                <option value="s1">Chandigarh Bus Terminal</option>
+                                <option value="s2">Kharar Bus Stand</option>
+                                <option value="s3">Landran Chowk</option>
+                                <option value="s4">Ambala Bus Terminal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number for Alert</label>
+                            <input type="tel" id="phone" placeholder="Enter your phone number">
+                        </div>
+                        <button class="btn btn-primary" id="notifyBtn">
+                            <i class="fas fa-bell"></i>
+                            Set Notification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">User Profile</h3>
+                <button class="modal-close" id="closeProfileModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="profile-name">Full Name</label>
+                    <input type="text" id="profile-name" value="John Smith">
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">Email Address</label>
+                    <input type="email" id="profile-email" value="john.smith@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="profile-phone">Phone Number</label>
+                    <input type="tel" id="profile-phone" value="+91 9876543210">
+                </div>
+                <div class="form-group">
+                    <label for="profile-notifications">Notification Preferences</label>
+                    <select id="profile-notifications">
+                        <option value="all">All Notifications</option>
+                        <option value="important">Important Only</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Privacy Policy</h3>
+                <button class="modal-close" id="closePrivacyModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Last Updated: September 2025</strong></p>
+                <p>UrbanGo is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share information about you when you use our website and services.</p>
+                <h4>Information We Collect</h4>
+                <p>We collect information you provide directly to us, such as when you create an account, use our tracking features, or contact us for support.</p>
+                <h4>How We Use Your Information</h4>
+                <p>We use the information we collect to provide, maintain, and improve our services, to develop new services, and to protect TrackWise and our users.</p>
+                <h4>Sharing of Information</h4>
+                <p>We do not sell your personal information to third parties. We may share information with your consent or at your direction.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Terms of Service</h3>
+                <button class="modal-close" id="closeTermsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Last Updated: september 2025</strong></p>
+                <p>Welcome to UrbonGo! These Terms of Service govern your use of our website and services.</p>
+                <h4>Accounts</h4>
+                <p>You must provide accurate and complete information when creating an account. You are responsible for safeguarding your account credentials.</p>
+                <h4>Content</h4>
+                <p>Our service allows you to post, link, store, share and otherwise make available certain information. You are responsible for the content that you post.</p>
+                <h4>Termination</h4>
+                <p>We may terminate or suspend your account immediately, without prior notice, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Page navigation functionality
+        document.getElementById('showLogin').addEventListener('click', () => {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+        });
+
+        document.getElementById('showSignup').addEventListener('click', () => {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('signupPage').style.display = 'flex';
+        });
+
+        document.getElementById('heroLogin').addEventListener('click', () => {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+        });
+
+        document.getElementById('gotoSignup').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('signupPage').style.display = 'flex';
+        });
+
+        document.getElementById('gotoLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('signupPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+        });
+
+        document.getElementById('heroLearnMore').addEventListener('click', () => {
+            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Modal functionality
+        document.getElementById('showPrivacyModal').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('privacyModal').classList.add('show');
+        });
+
+        document.getElementById('footerPrivacy').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('privacyModal').classList.add('show');
+        });
+
+        document.getElementById('closePrivacyModal').addEventListener('click', () => {
+            document.getElementById('privacyModal').classList.remove('show');
+        });
+
+        document.getElementById('showTermsModal').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('termsModal').classList.add('show');
+        });
+
+        document.getElementById('footerTerms').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('termsModal').classList.add('show');
+        });
+
+        document.getElementById('closeTermsModal').addEventListener('click', () => {
+            document.getElementById('termsModal').classList.remove('show');
+        });
+
+        // Profile dropdown functionality
+        document.getElementById('userProfile').addEventListener('click', () => {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        });
+
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            document.getElementById('profileModal').classList.add('show');
+            document.getElementById('profileDropdown').classList.remove('show');
+        });
+
+        document.getElementById('closeProfileModal').addEventListener('click', () => {
+            document.getElementById('profileModal').classList.remove('show');
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'flex';
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-profile')) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if (username && password) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                initMap(); // Initialize the map after login
+            }
+        });
+
+        // Signup functionality
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm = document.getElementById('signup-confirm').value;
+            
+            // Simple validation
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (name && email && username && password) {
+                document.getElementById('signupPage').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                
+                // Update user name in the app
+                document.querySelector('.user-avatar').textContent = name.split(' ').map(n => n[0]).join('');
+                document.querySelector('.user-profile span').textContent = name;
+                
+                initMap(); // Initialize the map after signup
+            }
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i><span>Dark Mode</span>';
+            } else {
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i><span>Light Mode</span>';
+            }
+        });
+
+        // Initialize map with OpenStreetMap
+        let map;
+        let busMarkers = [];
+        let routeLines = [];
+        
+        // Define the bus route from Chandigarh to Ambala (approx 120 km)
+        const busRoute = [
+            [30.7333, 76.7794], // Chandigarh
+            [30.7420, 76.7360],
+            [30.7520, 76.6920],
+            [30.7620, 76.6480],
+            [30.7720, 76.6040],
+            [30.7820, 76.5600],
+            [30.7920, 76.5160],
+            [30.8020, 76.4720],
+            [30.8120, 76.4280],
+            [30.8220, 76.3840],
+            [30.8320, 76.3400],
+            [30.8420, 76.2960],
+            [30.8520, 76.2520],
+            [30.8620, 76.2080],
+            [30.3780, 76.7720]  // Ambala
+        ];
+        
+        // Define bus data with 30 km spacing (approx 25% of route between buses)
+        const busData = [
+            {id: 'B101', name: 'B101 - Chandigarh to Ambala', position: 0.75, speed: 62, capacity: 68},
+            {id: 'B205', name: 'B205 - Chandigarh to Ambala', position: 0.50, speed: 58, capacity: 82},
+            {id: 'B307', name: 'B307 - Chandigarh to Ambala', position: 0.25, speed: 65, capacity: 45},
+            {id: 'B409', name: 'B409 - Chandigarh to Ambala', position: 0.10, speed: 60, capacity: 75},
+            {id: 'B512', name: 'B512 - Chandigarh to Ambala', position: 0.05, speed: 55, capacity: 90}
+        ];
+
+        function initMap() {
+            // Initialize the map
+            map = L.map('map').setView([30.7333, 76.7794], 10);
+            
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Draw the route
+            const routeLine = L.polyline(busRoute, {
+                color: '#6366f1',
+                weight: 4,
+                opacity: 0.7,
+                dashArray: '10, 10'
+            }).addTo(map);
+            routeLines.push(routeLine);
+            
+            // Add bus markers
+            busData.forEach(bus => {
+                const pointIndex = Math.floor(bus.position * (busRoute.length - 1));
+                const position = busRoute[pointIndex];
+                
+                // Create custom bus marker
+                const busIcon = L.divIcon({
+                    className: 'bus-marker pulse',
+                    html: `<div>${bus.id.substring(1)}</div>`,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+                
+                const marker = L.marker(position, {icon: busIcon})
+                    .addTo(map)
+                    .bindPopup(`<strong>${bus.name}</strong><br>Speed: ${bus.speed} km/h<br>Capacity: ${bus.capacity}%`);
+                
+                busMarkers.push({
+                    id: bus.id,
+                    marker: marker,
+                    data: bus,
+                    pointIndex: pointIndex
+                });
+            });
+            
+            // Add start and end markers
+            L.marker(busRoute[0]).addTo(map)
+                .bindPopup('<strong>Chandigarh</strong><br>Start Point');
+                
+            L.marker(busRoute[busRoute.length - 1]).addTo(map)
+                .bindPopup('<strong>Ambala</strong><br>End Point');
+            
+            // Fit map to show the entire route
+            map.fitBounds(routeLine.getBounds());
+            
+            // Start bus movement simulation
+            setInterval(moveBuses, 1000);
+        }
+
+        function moveBuses() {
+            busMarkers.forEach(bus => {
+                // Move bus along the route
+                bus.pointIndex = (bus.pointIndex + 1) % busRoute.length;
+                const nextPoint = busRoute[bus.pointIndex];
+                
+                // Update marker position
+                bus.marker.setLatLng(nextPoint);
+                
+                // Update ETA in the UI
+                const remainingPoints = busRoute.length - bus.pointIndex;
+                const eta = Math.round(remainingPoints * 0.5); // 0.5 minutes per point
+                const etaElement = document.querySelector(`.bus-item[data-bus="${bus.id}"] .bus-eta`);
+                if (etaElement) {
+                    etaElement.textContent = `${eta} min`;
+                }
+            });
+        }
+
+        // Notify Me button functionality
+        const notifyButton = document.getElementById('notifyBtn');
+        notifyButton.addEventListener('click', () => {
+            const busSelect = document.getElementById('bus-select');
+            const stopSelect = document.getElementById('stop-select');
+            const phoneInput = document.getElementById('phone');
+            
+            if (phoneInput.value.trim() === '') {
+                alert('Please enter your phone number');
+                return;
+            }
+            
+            alert(`Notification set! You'll receive an SMS when ${busSelect.options[busSelect.selectedIndex].text} is approaching ${stopSelect.options[stopSelect.selectedIndex].text}`);
+            
+            // Reset form
+            phoneInput.value = '';
+        });
+
+        // Bus item selection
+        const busItems = document.querySelectorAll('.bus-item');
+        busItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const busId = item.getAttribute('data-bus');
+                if (!busId) return;
+                
+                // Find the bus marker
+                const bus = busMarkers.find(b => b.id === busId);
+                if (bus) {
+                    // Center map on selected bus
+                    map.setView(bus.marker.getLatLng(), 13);
+                    
+                    // Open popup
+                    bus.marker.openPopup();
+                    
+                    // Update bus details
+                    const detailValueElements = document.querySelectorAll('.detail-value');
+                    if (detailValueElements.length >= 5) {
+                        detailValueElements[0].textContent = busId;
+                        const etaElement = document.querySelector(`.bus-item[data-bus="${busId}"] .bus-eta`);
+                        if (etaElement) {
+                            detailValueElements[3].textContent = etaElement.textContent + ' minutes';
+                        }
+                    }
+                }
+            });
+        });
+
+        // Set current date and time
+        const now = new Date();
+        document.getElementById('date').valueAsDate = now;
+        
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('time').value = `${hours}:${minutes}`;
+    </script>
+</body>
+</html>
